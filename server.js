@@ -1,35 +1,64 @@
-require("dotenv").config();
+const inquirer = require('inquirer')
 
-const sequelize = require("./db/connection");
-require("./models");
 
-const routes = require("./routes");
+// const PORT = process.env.PORT || 3001;
 
-const PORT = process.env.PORT || 3001;
-
-var inquirer = require("inquirer");
-inquirer
-  .prompt([
+const options = 
+  [
     /* Pass your questions in here */
-  ])
-  .then((answers) => {
-    // Use user feedback for... whatever!!
-  })
-  .catch((error) => {
-    if (error.isTtyError) {
-      // Prompt couldn't be rendered in the current environment
-    } else {
-      // Something else went wrong
+    {
+      type: 'list',
+      name: 'shape',
+      message: 'Enter shape:',
+      choices: ['veiw all employees', 'add role', 'add employee', 'add role', 'update role' ]
+      // validate: function(userInput) {
+      //     if (userInput.length > 3) {
+      //         return "logo must be 3 characters"
+      //     }
+      //     return true
+    },  
+  {
+      type: 'input',
+      name: 'color',
+      message: 'enter color:'
+  },
+  {
+      type: 'input',
+      name: 'textColor',
+      message: 'Enter text color:'
+  },
+  {
+      type: 'list',
+      name: 'shape',
+      message: 'Enter shape:',
+      choices: ['circle', 'triangle', 'square']
+  }
+
+  ]
+  // .then((answers) => {
+  //   // Use user feedback for... whatever!!
+  // })
+  // .catch((err) => {
+  //   if (err) {
+  //     // Prompt couldn't be rendered in the current environment
+  //   } else {
+  //     // Something else went wrong
+  //   }
+  // });
+
+  const init = async () => {
+    try {
+        const answers = await options.prompt(options)
+        const logo = generateLogo(answers)
+        fs.writeFile('logo.svg', logo, (err) => {
+            if (err) {
+                throw err
+            }
+            console.log('logo generated :)')
+        })
+    } catch (error) {
+        console.error('error occurred', error)
     }
-  });
+}
 
-const init = async () => {
-  // sync db
-  await sequelize.sync({ force: false });
-  console.log("DB connected!");
-
-  // start server
-  app.listen(PORT, () => console.log(`Server listening on PORT: ${PORT}`));
-};
-
-init();
+init()
